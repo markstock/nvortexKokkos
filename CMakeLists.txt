@@ -54,3 +54,7 @@ INCLUDE_DIRECTORIES ( "src" )
 ADD_EXECUTABLE ( "nvKok01.bin" "src/nvKok01.cpp" )
 TARGET_LINK_LIBRARIES( "nvKok01.bin" Kokkos::kokkos )
 
+ADD_EXECUTABLE ( "nvKok02.bin" "src/nvKok02.cpp" )
+TARGET_LINK_LIBRARIES( "nvKok02.bin" Kokkos::kokkos )
+
+
