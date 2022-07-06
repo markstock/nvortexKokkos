@@ -13,7 +13,7 @@
 #include <Kokkos_Core.hpp>
 
 // compute using float or double
-#define FLOAT double
+#define FLOAT float
 
 // -------------------------
 // compute kernel - CPU
@@ -59,7 +59,7 @@ int32_t buffer(const int32_t _n, const int32_t _align) {
 // main program
 
 static void usage() {
-  fprintf(stderr, "Usage: nvHip01 [-n=<number>]\n");
+  fprintf(stderr, "Usage: nvKok01 [-n=<number>]\n");
   exit(1);
 }
 
