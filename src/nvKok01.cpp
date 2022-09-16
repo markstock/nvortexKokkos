@@ -85,6 +85,10 @@ int main(int argc, char **argv) {
   const int32_t nstreams = 1;
   printf( "  ngpus ( %d )  and nstreams ( %d )\n", ngpus, nstreams);
 
+#ifdef _OPENMP
+  printf( "  max openmp threads ( %d )\n", omp_get_max_threads());
+#endif
+
   // set stream sizes
   const int32_t nperstrm = buffer(npart/nstreams, 64);
   const int32_t npfull = nstreams*nperstrm;

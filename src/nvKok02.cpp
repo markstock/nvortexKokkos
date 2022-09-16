@@ -15,6 +15,18 @@
 // compute using float or double
 #define FLOAT float
 
+//using floatpair = std::pair<FLOAT,FLOAT>;
+
+// Kokkos needs reduction variables to have the + operator defined
+//template <typename T,typename U>                                                   
+//std::pair<T,U> operator+=(const std::pair<T,U> & l,const std::pair<T,U> & r) {   
+//    return {l.first+r.first, l.second+r.second};                                    
+//} 
+//template <typename T,typename U>                                                   
+//std::pair<T,U> operator+=(const std::pair<T,U> & r) {   
+//    return {this->first+r.first, this.second+r.second};                                    
+//} 
+
 // -------------------------
 // compute kernel - CPU
 void nvortex_2d_nograds_cpu(
@@ -84,6 +96,10 @@ int main(int argc, char **argv) {
   // number of cuda streams to break work into
   const int32_t nstreams = 1;
   printf( "  ngpus ( %d )  and nstreams ( %d )\n", ngpus, nstreams);
+
+#ifdef _OPENMP
+  printf( "  max openmp threads ( %d )\n", omp_get_max_threads());
+#endif
 
   // set stream sizes
   const int32_t nperstrm = buffer(npart/nstreams, 64);
@@ -241,6 +257,7 @@ int main(int argc, char **argv) {
       // velocity accumulators for target point i
       htu(i) = 0.0f;
       htv(i) = 0.0f;
+      //floatpair result(0.0,0.0);
 
       // loop over all source points, reduce to two variables
       // NOTE: contrary to "always name your parallel regions", you CAN'T name a nested region!!!
@@ -249,19 +266,25 @@ int main(int argc, char **argv) {
       Kokkos::parallel_reduce (//"perpart02c",
         Kokkos::TeamThreadRange(thread, 0, npart),
         [=] (const int32_t j, FLOAT& locu/*, FLOAT& locv*/) {
+        //[=] (const int32_t j, floatpair& locu) {
           FLOAT dx = hsx(j) - hsx(i);
           FLOAT dy = hsy(j) - hsy(i);
           FLOAT distsq = dx*dx + dy*dy + hsr(j)*hsr(j) + hsr(i)*hsr(i);
           FLOAT factor = hss(j) / distsq;
           locu += dy * factor;
           //locv -= dx * factor;
+          //locu.first += dy * factor;
+          //locu.second -= dx * factor;
         },
+        //result
         htu(i)//, htv(i)
       );
 
       // save into device view
       htu(i) /= (2.0f*3.1415926536f);
       htv(i) /= (2.0f*3.1415926536f);
+      //htu(i) = result.first / (2.0f*3.1415926536f);
+      //htv(i) = result.second / (2.0f*3.1415926536f);
     }
   );
 
