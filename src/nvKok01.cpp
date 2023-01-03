@@ -150,66 +150,6 @@ int main(int argc, char **argv) {
     nvortex_2d_nograds_cpu(npart, hsx.data(),hsy.data(),hss.data(),hsr.data(), hsx[i],hsy[i],hsr[i], &htu[i],&htv[i]);
   } );
 
-/*
-  // move over all source particles first
-  const int32_t srcsize = npfull*sizeof(FLOAT);
-  const int32_t trgsize = npart*sizeof(FLOAT);
-  hipMalloc (&dsx, srcsize);
-  hipMalloc (&dsy, srcsize);
-  hipMalloc (&dss, srcsize);
-  hipMalloc (&dsr, srcsize);
-  hipMalloc (&dtu, srcsize);
-  hipMalloc (&dtv, srcsize);
-  hipMemcpy (dsx, hsx.data(), srcsize, hipMemcpyHostToDevice);
-  hipMemcpy (dsy, hsy.data(), srcsize, hipMemcpyHostToDevice);
-  hipMemcpy (dss, hss.data(), srcsize, hipMemcpyHostToDevice);
-  hipMemcpy (dsr, hsr.data(), srcsize, hipMemcpyHostToDevice);
-  hipMemset (dtu, 0, trgsize);
-  hipMemset (dtv, 0, trgsize);
-  dtx = dsx;
-  dty = dsy;
-  dtr = dsr;
-  hipDeviceSynchronize();
-
-  for (int32_t nstrm=0; nstrm<nstreams; ++nstrm) {
-
-    // round-robin the GPUs used
-    //const int32_t thisgpu = nstrm % ngpus;
-    //cudaSetDevice(0);
-
-    const dim3 blocks(npfull/THREADS_PER_BLOCK, 1, 1);
-    const dim3 threads(THREADS_PER_BLOCK, 1, 1);
-
-    // move the data
-
-    // launch the kernel
-    hipLaunchKernelGGL(nvortex_2d_nograds_gpu, dim3(blocks), dim3(threads), 0, 0, nperstrm, dsx,dsy,dss,dsr, 0,dtx,dty,dtr,dtu,dtv);
-    hipDeviceSynchronize();
-
-    // check
-    auto err = hipGetLastError();
-    if (err != hipSuccess) {
-      fprintf(stderr, "Failed to launch kernel: %s!\n", hipGetErrorString(err));
-      exit(EXIT_FAILURE);
-    }
-
-    // pull data back down
-    hipMemcpy (htu.data(), dtu, trgsize, hipMemcpyDeviceToHost);
-    hipMemcpy (htv.data(), dtv, trgsize, hipMemcpyDeviceToHost);
-    hipDeviceSynchronize();
-  }
-
-  // join streams
-
-  // free resources
-  hipFree(dsx);
-  hipFree(dsy);
-  hipFree(dss);
-  hipFree(dsr);
-  hipFree(dtu);
-  hipFree(dtv);
-*/
-
   // time and report
   end = std::chrono::system_clock::now();
   elapsed_seconds = end-start;
