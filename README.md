@@ -12,8 +12,7 @@ Simple direct n-body solvers using Kokkos for parallelization and performance
 
 ## Description
 
-The first code, `nvKok01.cpp` is designed to be the minimal n-body code for Kokkos. When compiler with the OPENMP driver, the performance should be similar to the basic "host" OpenMP operation.
+The first code, `nvKok01.cpp` is designed to be the minimal n-body code for Kokkos. When compiled with the OPENMP driver, the performance should be similar to the basic "host" OpenMP operation.
 
 Future versions will be designed to make calls to accelerators (via HIP or CUDA backends).
-
 
